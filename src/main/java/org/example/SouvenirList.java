@@ -42,7 +42,6 @@ public class SouvenirList {
                 break;
             }
         }
-        //souvenirList.remove(index);
         souvenirList.set(index,newSouvenir);
     }
 
@@ -57,8 +56,6 @@ public class SouvenirList {
     public long getID(Souvenir s2) {
 
         for (Souvenir s : souvenirList){
-            System.out.println(s);
-            System.out.println(s2);
             if (s.equals(s2)){
                 return s.getSouvenir_id();
             }

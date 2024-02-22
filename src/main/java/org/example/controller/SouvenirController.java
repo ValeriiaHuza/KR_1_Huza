@@ -21,10 +21,12 @@ import java.util.List;
 public class SouvenirController {
 
     private SouvenirList souvenirList;
+    private ManufactureController manufactureController;
 
-    public SouvenirController(){
+    public SouvenirController(ManufactureController mC){
         ArrayList<Souvenir> al = (ArrayList<Souvenir>) readSouvenirsData();
         souvenirList = new SouvenirList(al);
+        this.manufactureController = mC;
     }
 
     public boolean saveSouvenir(Souvenir souvenir) throws IOException {
@@ -39,13 +41,20 @@ public class SouvenirController {
             return false;
         }
 
+        List<Long> allID = manufactureController.getManufactureList().getAllManufactureID();
+
+        if(!allID.contains(souvenir.getManufacture_id())){
+            System.out.println("Such manufacture_id doesn't exist!");
+            return false;
+        }
+
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(mainFolderName,souvenir.getName().toLowerCase().replace(" ","-")+"_"+souvenir.getSouvenir_id()+".txt"), StandardCharsets.UTF_8)) {
 
             writer.write(String.valueOf(souvenir.getSouvenir_id()));
             writer.newLine();
             writer.write(souvenir.getName());
             writer.newLine();
-            writer.write(souvenir.getManufacture_id());
+            writer.write(String.valueOf(souvenir.getManufacture_id()));
             writer.newLine();
             writer.write(souvenir.getDate_of_manufacture().toString());
             writer.newLine();
@@ -79,7 +88,7 @@ public class SouvenirController {
         for (Souvenir s : souvenirList.getSouvenirList()){
             if(s.getSouvenir_id()!=(newSouvenir.getSouvenir_id())){
                 //якщо айді не співпадають, але імена і виробник такі вже є, то оновлювати не можна
-                if (s.getName().equals(newSouvenir.getName()) && s.getManufacture_id().equals(newSouvenir.getManufacture_id())){
+                if (s.getName().equals(newSouvenir.getName()) && s.getManufacture_id() == newSouvenir.getManufacture_id()){
                     System.out.println("Such souvenir name exists");
                     return false;
                 }
@@ -111,7 +120,7 @@ public class SouvenirController {
                 writer.newLine();
                 writer.write(newSouvenir.getName());
                 writer.newLine();
-                writer.write(newSouvenir.getManufacture_id());
+                writer.write(String.valueOf(newSouvenir.getManufacture_id()));
                 writer.newLine();
                 writer.write(newSouvenir.getDate_of_manufacture().toString());
                 writer.newLine();
@@ -162,7 +171,7 @@ public class SouvenirController {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error while reading data from files");
+            System.out.println("No souvenir data in files");
         }
 
         // Print the read Souvenirs
@@ -179,7 +188,7 @@ public class SouvenirController {
         try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             souvenir.setSouvenir_id(Long.parseLong(reader.readLine()));
             souvenir.setName(reader.readLine());
-            souvenir.setManufacture_id(reader.readLine());
+            souvenir.setManufacture_id(Long.parseLong(reader.readLine()));
             String date = reader.readLine();
 
             LocalDate dateDate = LocalDate.parse(date);

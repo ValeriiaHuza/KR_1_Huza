@@ -16,11 +16,11 @@ import java.util.Objects;
 public class Souvenir implements Serializable {
     private long souvenir_id;
     private String name;
-    private String manufacture_id;
+    private long manufacture_id;
     private LocalDate date_of_manufacture;
     private double price;
 
-    public Souvenir(String name, String manufacture_id, LocalDate date_of_manufacture, double price){
+    public Souvenir(String name, long manufacture_id, LocalDate date_of_manufacture, double price){
         this.name = name;
         this.manufacture_id = manufacture_id;
         this.date_of_manufacture = date_of_manufacture;
