@@ -5,12 +5,12 @@ import lombok.Setter;
 import org.example.SouvenirList;
 import org.example.schema.Souvenir;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,19 +19,20 @@ import java.util.List;
 @Getter
 @Setter
 public final class SouvenirController {
-
+    private static final String MAIN_FOLDER_NAME = "souvenir";
+    private static final String FILE_EXTENSION = ".txt";
     private static SouvenirController souvenirController;
     private SouvenirList souvenirList;
     private ManufactureController manufactureController;
 
-    private SouvenirController(){
+    private SouvenirController() {
         ArrayList<Souvenir> al = (ArrayList<Souvenir>) readSouvenirsData();
         souvenirList = SouvenirList.getInstance(al);
         this.manufactureController = ManufactureController.getInstance();
     }
 
-    public static SouvenirController getInstance(){
-        if(souvenirController==null){
+    public static SouvenirController getInstance() {
+        if (souvenirController == null) {
             souvenirController = new SouvenirController();
         }
         return souvenirController;
@@ -39,24 +40,25 @@ public final class SouvenirController {
 
     public boolean saveSouvenir(Souvenir souvenir) throws IOException {
 
-        String mainFolderName = "souvenir";
-        Files.createDirectories(Paths.get(mainFolderName));
+        Files.createDirectories(Paths.get(MAIN_FOLDER_NAME));
 
         //check unique
-
-        if(souvenirList.contains(souvenir)){
+        if (souvenirList.contains(souvenir)) {
             System.out.println("This souvenir is already exists!");
             return false;
         }
 
         List<Long> allID = manufactureController.getManufactureList().getAllManufactureID();
 
-        if(!allID.contains(souvenir.getManufacture_id())){
+        if (!allID.contains(souvenir.getManufacture_id())) {
             System.out.println("Such manufacture_id doesn't exist!");
             return false;
         }
 
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(mainFolderName,souvenir.getName().toLowerCase().replace(" ","-")+"_"+souvenir.getSouvenir_id()+".txt"), StandardCharsets.UTF_8)) {
+        String fileName = generateFileName(souvenir);
+        Path filePath = Paths.get(MAIN_FOLDER_NAME, fileName);
+
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
 
             writer.write(String.valueOf(souvenir.getSouvenir_id()));
             writer.newLine();
@@ -69,61 +71,65 @@ public final class SouvenirController {
             writer.write(String.valueOf(souvenir.getPrice()));
 
             souvenirList.add(souvenir);
-
             saveSouvenirIDTOFile(souvenir);
-
             System.out.println("Souvenir object saved to file successfully.");
             return true;
-
         } catch (IOException e) {
             System.out.println("Can't save souvenir");
             return false;
         }
     }
 
-    private void saveSouvenirIDTOFile(Souvenir souvenir) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("souvenir_id.txt"))) {
-                writer.write(String.valueOf(souvenir.getSouvenir_id()));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private String generateFileName(Souvenir souvenir) {
+        return souvenir.getName().toLowerCase().replace(" ", "-") + "_" + souvenir.getSouvenir_id() + FILE_EXTENSION;
     }
 
-    public boolean updateSouvenir(Souvenir newSouvenir){
+    private void saveSouvenirIDTOFile(Souvenir souvenir) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("souvenir_id.txt"))) {
+            writer.write(String.valueOf(souvenir.getSouvenir_id()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean updateSouvenir(Souvenir newSouvenir) {
 
         //check before update
 
-        for (Souvenir s : souvenirList.getSouvenirList()){
-            if(s.getSouvenir_id()!=(newSouvenir.getSouvenir_id())){
+        for (Souvenir s : souvenirList.getSouvenirList()) {
+            if (s.getSouvenir_id() != (newSouvenir.getSouvenir_id())) {
                 //якщо айді не співпадають, але імена і виробник такі вже є, то оновлювати не можна
-                if (s.getName().equals(newSouvenir.getName()) && s.getManufacture_id() == newSouvenir.getManufacture_id()){
+                if (s.getName().equals(newSouvenir.getName()) && s.getManufacture_id() == newSouvenir.getManufacture_id()) {
                     System.out.println("Such souvenir name exists");
                     return false;
                 }
             }
         }
 
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("souvenir"))) {
+        if (!manufactureController.getAllManufactureID().contains(newSouvenir.getManufacture_id())) {
+            System.out.println("Such manufacture id doesn't exist");
+            return false;
+        }
 
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(MAIN_FOLDER_NAME))) {
             Path souvenirFile = null;
 
-            for (Path filePath : directoryStream){
+            for (Path filePath : directoryStream) {
                 String s = filePath.getFileName().toString();
-                String [] name = s.split("_");
+                String[] name = s.split("_");
 
-                if (name[1].equals(newSouvenir.getSouvenir_id() +".txt")){
+                if (name[1].equals(newSouvenir.getSouvenir_id() + FILE_EXTENSION)) {
                     souvenirFile = filePath;
                     break;
                 }
             }
 
-            if(souvenirFile==null){
+            if (souvenirFile == null) {
                 System.out.println("Such souvenir doesn't exist");
                 return false;
             }
 
             try (BufferedWriter writer = Files.newBufferedWriter(souvenirFile, StandardCharsets.UTF_8)) {
-
                 writer.write(String.valueOf(newSouvenir.getSouvenir_id()));
                 writer.newLine();
                 writer.write(newSouvenir.getName());
@@ -133,24 +139,24 @@ public final class SouvenirController {
                 writer.write(newSouvenir.getDate_of_manufacture().toString());
                 writer.newLine();
                 writer.write(String.valueOf(newSouvenir.getPrice()));
+                writer.close();
 
                 souvenirList.update(newSouvenir);
+
+                Path newPath = Paths.get(MAIN_FOLDER_NAME, generateFileName(newSouvenir));
+                Files.move(souvenirFile, newPath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Souvenir object updated!");
+                return true;
             }
-
-            System.out.println("Souvenir object updated!");
-            return true;
-
         } catch (IOException e) {
             System.out.println("Souvenir can't update");
             return false;
         }
     }
 
-    //create method for creatinf file name
+    public boolean deleteSouvenir(Souvenir souvenir) {
 
-    public boolean deleteSouvenir(Souvenir souvenir){
-
-        Path filePath = Paths.get("souvenir",souvenir.getName().toLowerCase()+"_"+souvenir.getSouvenir_id()+".txt");
+        Path filePath = Paths.get(MAIN_FOLDER_NAME, generateFileName(souvenir));
 
         try {
             Files.delete(filePath);
@@ -158,23 +164,17 @@ public final class SouvenirController {
         } catch (IOException e) {
             System.out.println("Error deleting file: " + e.getMessage());
         }
-
         return true;
     }
 
-    private List<Souvenir> readSouvenirsData(){
-
-        String mainFolderName = "souvenir";
-
+    private List<Souvenir> readSouvenirsData() {
         ArrayList<Souvenir> result = new ArrayList<>();
 
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(mainFolderName))) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(MAIN_FOLDER_NAME))) {
             for (Path filePath : directoryStream) {
                 if (Files.isRegularFile(filePath) && filePath.toString().endsWith(".txt")) {
                     Souvenir souvenir = readSouvenirFromFile(filePath);
-
                     //check if exists???
-
                     result.add(souvenir);
                 }
             }
@@ -202,11 +202,17 @@ public final class SouvenirController {
             LocalDate dateDate = LocalDate.parse(date);
             souvenir.setDate_of_manufacture(dateDate);
             souvenir.setPrice(Double.parseDouble(reader.readLine()));
-
         } catch (IOException e) {
-            System.err.println("Error reading Souvenir from file: " + e.getMessage());
+            System.out.println("Error reading Souvenir from file: " + e.getMessage());
         }
         return souvenir;
     }
 
+    public List<Long> getAllSouvenirsID() {
+        return souvenirList.getAllSouvenirsID();
+    }
+
+    public Souvenir getSouvenirByID(long id) {
+        return souvenirList.getSouvenirByID(id);
+    }
 }

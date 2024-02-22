@@ -4,52 +4,50 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.ManufactureList;
 import org.example.schema.Manufacture;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 public final class ManufactureController {
-
+    private static final String MAIN_FOLDER_NAME = "manufacture";
+    private static final String FILE_EXTENSION = ".txt";
     private static ManufactureController manufactureController;
     private ManufactureList manufactureList;
 
-    private ManufactureController(){
+    private ManufactureController() {
         ArrayList<Manufacture> ml = (ArrayList<Manufacture>) readManufacturesData();
         manufactureList = ManufactureList.getInstance(ml);
     }
 
     //add singleton
-    public static ManufactureController getInstance(){
-        if(manufactureController==null){
+    public static ManufactureController getInstance() {
+        if (manufactureController == null) {
             manufactureController = new ManufactureController();
         }
         return manufactureController;
     }
 
     public boolean saveManufacture(Manufacture manufacture) throws IOException {
-
-        String mainFolderName = "manufacture";
-        Files.createDirectories(Paths.get(mainFolderName));
+        Files.createDirectories(Paths.get(MAIN_FOLDER_NAME));
 
         //check unique
-
-        if(manufactureList.contains(manufacture)){
-            System.out.println("This manufacture is already exists!");
+        if (manufactureList.contains(manufacture)) {
+            System.out.println("This manufacture already exists!");
             return false;
         }
 
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(mainFolderName,manufacture.getName().toLowerCase().replace(" ","-")+"_"+manufacture.getManufacture_id()+".txt"), StandardCharsets.UTF_8)) {
+        String fileName = generateFileName(manufacture);
+        Path filePath = Paths.get(MAIN_FOLDER_NAME, fileName);
 
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             writer.write(String.valueOf(manufacture.getManufacture_id()));
             writer.newLine();
             writer.write(manufacture.getName());
@@ -57,64 +55,63 @@ public final class ManufactureController {
             writer.write(manufacture.getCountry());
 
             manufactureList.add(manufacture);
-
             saveManufactureIDTOFile(manufacture);
-
             System.out.println("Manufacture object saved to file successfully.");
             return true;
-
         } catch (IOException e) {
             System.out.println("Can't save manufacture");
             return false;
         }
     }
 
-    public boolean updateManufacture(Manufacture newManufacture){
+    private String generateFileName(Manufacture manufacture) {
+        return manufacture.getName().toLowerCase().replace(" ", "-") + "_" + manufacture.getManufacture_id() + FILE_EXTENSION;
+    }
 
+    public boolean updateManufacture(Manufacture newManufacture) {
         //check before update
-        for (Manufacture m : manufactureList.getManufactureList()){
-            if(m.getManufacture_id()!=(newManufacture.getManufacture_id())){
+        for (Manufacture m : manufactureList.getManufactureList()) {
+            if (m.getManufacture_id() != (newManufacture.getManufacture_id())) {
                 //якщо айді не співпадають, але імена такі вже є, то оновлювати не можна
-                if (m.getName().equals(newManufacture.getName())){
-                    System.out.println("Such manufactore name exists");
+                if (m.getName().equals(newManufacture.getName())) {
+                    System.out.println("Such manufacture name exists");
                     return false;
                 }
             }
         }
 
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("manufacture"))) {
-
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(MAIN_FOLDER_NAME))) {
             Path manufactureFile = null;
-
-            for (Path filePath : directoryStream){
+            for (Path filePath : directoryStream) {
                 String s = filePath.getFileName().toString();
-                String [] name = s.split("_");
+                String[] name = s.split("_");
 
-                if (name[1].equals(newManufacture.getManufacture_id() +".txt")){
+                if (name[1].equals(newManufacture.getManufacture_id() + FILE_EXTENSION)) {
                     manufactureFile = filePath;
                     break;
                 }
             }
 
-            if(manufactureFile==null){
+            if (manufactureFile == null) {
                 System.out.println("Such manufacture doesn't exist");
                 return false;
             }
 
             try (BufferedWriter writer = Files.newBufferedWriter(manufactureFile, StandardCharsets.UTF_8)) {
-
                 writer.write(String.valueOf(newManufacture.getManufacture_id()));
                 writer.newLine();
                 writer.write(newManufacture.getName());
                 writer.newLine();
                 writer.write(newManufacture.getCountry());
+                writer.close();
 
                 manufactureList.update(newManufacture);
+
+                Path newPath = Paths.get(MAIN_FOLDER_NAME, generateFileName(newManufacture));
+                Files.move(manufactureFile, newPath, StandardCopyOption.REPLACE_EXISTING);
+                System.out.println("Manufacture object updated!");
+                return true;
             }
-
-            System.out.println("Manufacture object updated!");
-            return true;
-
         } catch (IOException e) {
             System.out.println("Manufacture can't update");
             return false;
@@ -130,13 +127,11 @@ public final class ManufactureController {
     }
 
     private List<Manufacture> readManufacturesData() {
-        String mainFolderName = "manufacture";
-
         ArrayList<Manufacture> result = new ArrayList<>();
 
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(mainFolderName))) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(MAIN_FOLDER_NAME))) {
             for (Path filePath : directoryStream) {
-                if (Files.isRegularFile(filePath) && filePath.toString().endsWith(".txt")) {
+                if (Files.isRegularFile(filePath) && filePath.toString().endsWith(FILE_EXTENSION)) {
                     Manufacture manufacture = readManufactureFromFile(filePath);
                     result.add(manufacture);
                 }
@@ -155,7 +150,6 @@ public final class ManufactureController {
 
     private Manufacture readManufactureFromFile(Path filePath) {
         Manufacture manufacture = new Manufacture();
-
         try (BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)) {
             manufacture.setManufacture_id(Long.parseLong(reader.readLine()));
             manufacture.setName(reader.readLine());
@@ -164,5 +158,13 @@ public final class ManufactureController {
             System.err.println("Error reading Manufacture from file: " + e.getMessage());
         }
         return manufacture;
+    }
+
+    public List<Long> getAllManufactureID() {
+        return manufactureList.getAllManufactureID();
+    }
+
+    public Manufacture getManufactureByID(long id) {
+        return manufactureList.getManufactureByID(id);
     }
 }

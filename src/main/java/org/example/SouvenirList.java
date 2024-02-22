@@ -3,37 +3,41 @@ package org.example;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.schema.Souvenir;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
 public final class SouvenirList {
 
     private static SouvenirList souvInstance;
-    private ArrayList<Souvenir> souvenirList;
+    private List<Souvenir> souvenirList;
 
-    private SouvenirList(ArrayList<Souvenir> list){
+    private SouvenirList(List<Souvenir> list) {
         souvenirList = list;
     }
 
-    public static SouvenirList getInstance(ArrayList<Souvenir> list){
-        if(souvInstance==null){
+    public static SouvenirList getInstance(List<Souvenir> list) {
+        if (souvInstance == null) {
             souvInstance = new SouvenirList(list);
         }
         return souvInstance;
     }
-    public static SouvenirList getInstance(){
-        if(souvInstance==null){
+
+    public static SouvenirList getInstance() {
+        if (souvInstance == null) {
             souvInstance = new SouvenirList();
         }
         return souvInstance;
     }
 
-    public SouvenirList(){
+    public SouvenirList() {
         souvenirList = new ArrayList<>();
     }
 
-    public boolean contains(Souvenir souvenir){
+    public boolean contains(Souvenir souvenir) {
 
 //        for (Souvenir s : souvenirList){
 //            //or check only id?
@@ -47,13 +51,13 @@ public final class SouvenirList {
 
     public void update(Souvenir newSouvenir) {
         int index = -1;
-        for ( int i = 0; i < souvenirList.size(); i++){
-            if (souvenirList.get(i).getSouvenir_id()==newSouvenir.getSouvenir_id()){
+        for (int i = 0; i < souvenirList.size(); i++) {
+            if (souvenirList.get(i).getSouvenir_id() == newSouvenir.getSouvenir_id()) {
                 index = i;
                 break;
             }
         }
-        souvenirList.set(index,newSouvenir);
+        souvenirList.set(index, newSouvenir);
     }
 
     public void delete(Souvenir souvenir) {
@@ -66,12 +70,38 @@ public final class SouvenirList {
 
     public long getID(Souvenir s2) {
 
-        for (Souvenir s : souvenirList){
-            if (s.equals(s2)){
+        for (Souvenir s : souvenirList) {
+            if (s.equals(s2)) {
                 return s.getSouvenir_id();
             }
         }
 
         return -1;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder res = new StringBuilder();
+        for (Souvenir s : souvenirList) {
+            res.append(s.toString());
+            res.append("\n");
+        }
+        res.deleteCharAt(res.length() - 1);
+        return res.toString();
+    }
+
+    public List<Long> getAllSouvenirsID() {
+        return souvenirList.stream()
+                .map(Souvenir::getSouvenir_id)
+                .collect(Collectors.toList());
+    }
+
+    public Souvenir getSouvenirByID(long id) {
+        for (Souvenir s : souvenirList) {
+            if (s.getSouvenir_id() == id) {
+                return s;
+            }
+        }
+        return null;
     }
 }
