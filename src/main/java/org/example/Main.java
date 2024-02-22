@@ -39,10 +39,38 @@ public class Main {
                     getSouvenirsByCountry(in);
                     System.out.println("-------");
                     break;
+                case "4" :
+                    getManufacturesPriceDesc(in);
+                    System.out.println("-------");
+                    break;
                 case "0" :
                 default:
                     break;
             }
+        }
+    }
+
+    private void getManufacturesPriceDesc(Scanner in) {
+        //Вивести інформацію про виробників, чиї ціни на сувеніри менше заданої.
+        System.out.println("Write price:");
+
+        String sPrice = in.nextLine().trim();
+
+        while (!sPrice.matches("\\d*\\.?\\d+")){
+            System.out.println("Incorrect price. Try again");
+            sPrice = in.nextLine().trim();
+        }
+
+        double dPrice = Double.parseDouble(sPrice);
+
+        List<Manufacture> res = manufactureController.getManufacturePriceDesc(dPrice, souvenirController.getSouvenirList());
+
+        if(res.size()==0){
+            System.out.println("There are no such manufactures");
+        }
+        else {
+            System.out.println("Manufactures :");
+            res.forEach(System.out::println);
         }
     }
 

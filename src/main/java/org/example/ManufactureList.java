@@ -3,6 +3,7 @@ package org.example;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.schema.Manufacture;
+import org.example.schema.Souvenir;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,5 +86,17 @@ public final class ManufactureList {
 
     public void delete(Manufacture manufacture) {
         manufactureList.remove(manufacture);
+    }
+
+    public List<Manufacture> getManufacturesPriceDesc(double price, SouvenirList souvenirList) {
+        List<Long> manufacturesWithLessPrice = souvenirList.getSouvenirList().stream()
+                .filter(s -> s.getPrice() < price)
+                .map(Souvenir::getManufacture_id).toList();
+
+        return manufactureList.stream()
+                .filter(m -> manufacturesWithLessPrice.contains(m.getManufacture_id()))
+                .distinct()
+                .collect(Collectors.toList());
+
     }
 }

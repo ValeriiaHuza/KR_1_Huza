@@ -3,6 +3,7 @@ package org.example.controller;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.ManufactureList;
+import org.example.SouvenirList;
 import org.example.schema.Manufacture;
 import org.example.schema.Souvenir;
 
@@ -194,5 +195,9 @@ public final class ManufactureController {
             System.out.println("Error deleting file: " + e.getMessage());
         }
         return true;
+    }
+
+    public List<Manufacture> getManufacturePriceDesc(double price, SouvenirList souvenirList) {
+        return  manufactureList.getManufacturesPriceDesc(price, souvenirList);
     }
 }
