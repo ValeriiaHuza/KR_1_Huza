@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -199,5 +200,9 @@ public final class ManufactureController {
 
     public List<Manufacture> getManufacturePriceDesc(double price, SouvenirList souvenirList) {
         return  manufactureList.getManufacturesPriceDesc(price, souvenirList);
+    }
+
+    public Map<Manufacture,  List<Souvenir>> getAllSouvenirsAndManufactures(SouvenirList souvenirList) {
+        return manufactureList.getAllSouvenirsAndManufactures(souvenirList);
     }
 }

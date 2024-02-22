@@ -5,8 +5,8 @@ import lombok.Setter;
 import org.example.schema.Manufacture;
 import org.example.schema.Souvenir;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
@@ -98,5 +98,27 @@ public final class ManufactureList {
                 .distinct()
                 .collect(Collectors.toList());
 
+    }
+
+    public Map<Manufacture,  List<Souvenir>> getAllSouvenirsAndManufactures(SouvenirList souvenirList) {
+
+        //without streams
+        //        Map<Manufacture, List<Souvenir>> res = new HashMap<>();
+//
+//        for (Manufacture m : manufactureList){
+//            res.put(m, new ArrayList<>());
+//        }
+//
+//        for (Souvenir s : souvenirList.getSouvenirList()){
+//            Manufacture m = getManufactureByID(s.getManufacture_id());
+//            res.get(m).add(s);
+//        }
+        return manufactureList.stream()
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        m -> souvenirList.getSouvenirList().stream()
+                                .filter(s -> s.getManufacture_id() == m.getManufacture_id())
+                                .collect(Collectors.toList())
+                ));
     }
 }

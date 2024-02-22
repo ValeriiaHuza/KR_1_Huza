@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -43,10 +44,28 @@ public class Main {
                     getManufacturesPriceDesc(in);
                     System.out.println("-------");
                     break;
+                case "5" :
+                    getAllSouvenirsAndManufactures();
+                    System.out.println("-------");
+                    break;
                 case "0" :
                 default:
-                    break;
+                    return;
             }
+        }
+    }
+
+    private void getAllSouvenirsAndManufactures() {
+        Map<Manufacture, List<Souvenir>> res = manufactureController.getAllSouvenirsAndManufactures(souvenirController.getSouvenirList());
+
+        if(res.size()==0){
+            System.out.println("There are no elements in database");
+        }
+        else {
+           res.forEach(((manufacture, souvenirs) -> {
+               System.out.println("Manufacturer : " + manufacture);
+               souvenirs.forEach(souvenir -> System.out.println("        Souvenir: " + souvenir));
+           }));
         }
     }
 
