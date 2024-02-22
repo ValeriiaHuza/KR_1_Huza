@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.ManufactureList;
 import org.example.schema.Manufacture;
+import org.example.schema.Souvenir;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -166,5 +167,32 @@ public final class ManufactureController {
 
     public Manufacture getManufactureByID(long id) {
         return manufactureList.getManufactureByID(id);
+    }
+
+    public boolean deleteManufacture(long id, SouvenirController souvenirController) {
+        Manufacture manufacture = manufactureList.getManufactureByID(id);
+
+        Path filePath = Paths.get(MAIN_FOLDER_NAME, generateFileName(manufacture));
+        try {
+            Files.delete(filePath);
+            manufactureList.delete(manufacture);
+
+            List<Long> allToDelete = new ArrayList<>();
+
+            for (Souvenir s : souvenirController.getSouvenirList().getSouvenirList()){
+                if(s.getManufacture_id()==manufacture.getManufacture_id()){
+                   allToDelete.add(s.getSouvenir_id());
+                }
+            }
+
+            for (long l : allToDelete){
+                souvenirController.deleteSouvenir(l);
+            }
+
+
+        } catch (IOException e) {
+            System.out.println("Error deleting file: " + e.getMessage());
+        }
+        return true;
     }
 }

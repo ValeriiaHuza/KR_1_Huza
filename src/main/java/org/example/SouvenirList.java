@@ -2,6 +2,7 @@ package org.example;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.schema.Manufacture;
 import org.example.schema.Souvenir;
 
 import java.util.ArrayList;
@@ -97,11 +98,27 @@ public final class SouvenirList {
     }
 
     public Souvenir getSouvenirByID(long id) {
-        for (Souvenir s : souvenirList) {
-            if (s.getSouvenir_id() == id) {
-                return s;
-            }
-        }
-        return null;
+        return souvenirList.stream()
+                .filter(s -> s.getSouvenir_id() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<Souvenir> getSouvenirsByManufacture(long manufacture_id) {
+        return souvenirList.stream()
+                .filter(s -> s.getManufacture_id() == manufacture_id)
+                .collect(Collectors.toList());
+    }
+
+    public List<Souvenir> getSouvenirsByCountry(String country, ManufactureList manufactureList) {
+
+        List<Long> manufacturesFromCountry = manufactureList.getManufactureList().stream()
+                .filter(m -> m.getCountry().equalsIgnoreCase(country))
+                .map(Manufacture::getManufacture_id)
+                .toList();
+
+        return  souvenirList.stream()
+                .filter(s -> manufacturesFromCountry.contains(s.getManufacture_id()))
+                .collect(Collectors.toList());
     }
 }

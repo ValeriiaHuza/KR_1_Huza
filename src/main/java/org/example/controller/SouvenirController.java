@@ -2,6 +2,7 @@ package org.example.controller;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.ManufactureList;
 import org.example.SouvenirList;
 import org.example.schema.Souvenir;
 
@@ -23,12 +24,10 @@ public final class SouvenirController {
     private static final String FILE_EXTENSION = ".txt";
     private static SouvenirController souvenirController;
     private SouvenirList souvenirList;
-    private ManufactureController manufactureController;
 
     private SouvenirController() {
         ArrayList<Souvenir> al = (ArrayList<Souvenir>) readSouvenirsData();
         souvenirList = SouvenirList.getInstance(al);
-        this.manufactureController = ManufactureController.getInstance();
     }
 
     public static SouvenirController getInstance() {
@@ -38,7 +37,7 @@ public final class SouvenirController {
         return souvenirController;
     }
 
-    public boolean saveSouvenir(Souvenir souvenir) throws IOException {
+    public boolean saveSouvenir(Souvenir souvenir, ManufactureList manufactureList) throws IOException {
 
         Files.createDirectories(Paths.get(MAIN_FOLDER_NAME));
 
@@ -48,7 +47,7 @@ public final class SouvenirController {
             return false;
         }
 
-        List<Long> allID = manufactureController.getManufactureList().getAllManufactureID();
+        List<Long> allID = manufactureList.getAllManufactureID();
 
         if (!allID.contains(souvenir.getManufacture_id())) {
             System.out.println("Such manufacture_id doesn't exist!");
@@ -92,21 +91,21 @@ public final class SouvenirController {
         }
     }
 
-    public boolean updateSouvenir(Souvenir newSouvenir) {
+    public boolean updateSouvenir(Souvenir newSouvenir, ManufactureList manufactureList) {
 
         //check before update
 
         for (Souvenir s : souvenirList.getSouvenirList()) {
             if (s.getSouvenir_id() != (newSouvenir.getSouvenir_id())) {
                 //якщо айді не співпадають, але імена і виробник такі вже є, то оновлювати не можна
-                if (s.getName().equals(newSouvenir.getName()) && s.getManufacture_id() == newSouvenir.getManufacture_id()) {
+                if (s.getName().trim().equals(newSouvenir.getName().trim()) && s.getManufacture_id() == newSouvenir.getManufacture_id()) {
                     System.out.println("Such souvenir name exists");
                     return false;
                 }
             }
         }
 
-        if (!manufactureController.getAllManufactureID().contains(newSouvenir.getManufacture_id())) {
+        if (!manufactureList.getAllManufactureID().contains(newSouvenir.getManufacture_id())) {
             System.out.println("Such manufacture id doesn't exist");
             return false;
         }
@@ -154,10 +153,11 @@ public final class SouvenirController {
         }
     }
 
-    public boolean deleteSouvenir(Souvenir souvenir) {
+    public boolean deleteSouvenir(long id) {
+
+        Souvenir souvenir = souvenirList.getSouvenirByID(id);
 
         Path filePath = Paths.get(MAIN_FOLDER_NAME, generateFileName(souvenir));
-
         try {
             Files.delete(filePath);
             souvenirList.delete(souvenir);
@@ -214,5 +214,13 @@ public final class SouvenirController {
 
     public Souvenir getSouvenirByID(long id) {
         return souvenirList.getSouvenirByID(id);
+    }
+
+    public List<Souvenir> getSouvenirsByManufacture(long manufacture_id) {
+        return souvenirList.getSouvenirsByManufacture(manufacture_id);
+    }
+
+    public List<Souvenir> getSouvenirsByCountry(String country, ManufactureList manufactureList) {
+        return souvenirList.getSouvenirsByCountry(country,manufactureList);
     }
 }

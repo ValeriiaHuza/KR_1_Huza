@@ -82,4 +82,8 @@ public final class ManufactureList {
         }
         return null;
     }
+
+    public void delete(Manufacture manufacture) {
+        manufactureList.remove(manufacture);
+    }
 }
