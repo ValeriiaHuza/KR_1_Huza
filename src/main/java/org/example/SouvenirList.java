@@ -3,19 +3,30 @@ package org.example;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.schema.Souvenir;
-
 import java.util.ArrayList;
-
-//made_singleton
 
 @Getter
 @Setter
-public class SouvenirList {
+public final class SouvenirList {
 
+    private static SouvenirList souvInstance;
     private ArrayList<Souvenir> souvenirList;
 
-    public SouvenirList(ArrayList<Souvenir> list){
+    private SouvenirList(ArrayList<Souvenir> list){
         souvenirList = list;
+    }
+
+    public static SouvenirList getInstance(ArrayList<Souvenir> list){
+        if(souvInstance==null){
+            souvInstance = new SouvenirList(list);
+        }
+        return souvInstance;
+    }
+    public static SouvenirList getInstance(){
+        if(souvInstance==null){
+            souvInstance = new SouvenirList();
+        }
+        return souvInstance;
     }
 
     public SouvenirList(){

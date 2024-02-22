@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.ManufactureList;
 import org.example.schema.Manufacture;
-import org.example.schema.Souvenir;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,19 +13,27 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-public class ManufactureController {
+public final class ManufactureController {
 
+    private static ManufactureController manufactureController;
     private ManufactureList manufactureList;
 
-    public ManufactureController(){
+    private ManufactureController(){
         ArrayList<Manufacture> ml = (ArrayList<Manufacture>) readManufacturesData();
-        manufactureList = new ManufactureList(ml);
+        manufactureList = ManufactureList.getInstance(ml);
+    }
+
+    //add singleton
+    public static ManufactureController getInstance(){
+        if(manufactureController==null){
+            manufactureController = new ManufactureController();
+        }
+        return manufactureController;
     }
 
     public boolean saveManufacture(Manufacture manufacture) throws IOException {

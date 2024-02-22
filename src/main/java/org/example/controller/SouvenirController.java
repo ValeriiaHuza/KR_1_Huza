@@ -18,15 +18,23 @@ import java.util.List;
 //singleton
 @Getter
 @Setter
-public class SouvenirController {
+public final class SouvenirController {
 
+    private static SouvenirController souvenirController;
     private SouvenirList souvenirList;
     private ManufactureController manufactureController;
 
-    public SouvenirController(ManufactureController mC){
+    private SouvenirController(){
         ArrayList<Souvenir> al = (ArrayList<Souvenir>) readSouvenirsData();
-        souvenirList = new SouvenirList(al);
-        this.manufactureController = mC;
+        souvenirList = SouvenirList.getInstance(al);
+        this.manufactureController = ManufactureController.getInstance();
+    }
+
+    public static SouvenirController getInstance(){
+        if(souvenirController==null){
+            souvenirController = new SouvenirController();
+        }
+        return souvenirController;
     }
 
     public boolean saveSouvenir(Souvenir souvenir) throws IOException {

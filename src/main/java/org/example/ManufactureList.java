@@ -3,25 +3,37 @@ package org.example;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.schema.Manufacture;
-import org.example.schema.Souvenir;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class ManufactureList {
+public final class ManufactureList {
 
+    private static ManufactureList manInstance;
     private ArrayList<Manufacture> manufactureList;
 
-    public ManufactureList(ArrayList<Manufacture> manufactureList) {
+    private ManufactureList(ArrayList<Manufacture> manufactureList) {
         this.manufactureList = manufactureList;
     }
 
-    public ManufactureList(){
+    private ManufactureList(){
         manufactureList = new ArrayList<>();
+    }
+
+    public static ManufactureList getInstance(ArrayList<Manufacture> list){
+        if(manInstance == null){
+            manInstance = new ManufactureList(list);
+        }
+        return manInstance;
+    }
+
+    public static ManufactureList getInstance(){
+        if(manInstance == null){
+            manInstance = new ManufactureList();
+        }
+        return manInstance;
     }
 
     public boolean contains(Manufacture manufacture){

@@ -13,17 +13,17 @@ public class Main {
 
         Manufacture m1 = new Manufacture("Farm1","Ukraine");
 
-        ManufactureController manCont = new ManufactureController();
+        ManufactureController manCont = ManufactureController.getInstance();
 
         manCont.saveManufacture(m1);
 
         Souvenir s1 = new Souvenir("Green Apple",1,LocalDate.of(2001,10,1),22.0);
 
-        SouvenirController cont = new SouvenirController(manCont);
+        SouvenirController cont = SouvenirController.getInstance();
 
         cont.saveSouvenir(s1);
 
-        Souvenir s2 = new Souvenir("Apple", 2, LocalDate.of(20013,05,2),25.5);
+        Souvenir s2 = new Souvenir("Apple", 2, LocalDate.of(20013,5,2),25.5);
 
         cont.saveSouvenir(s2);
     }
