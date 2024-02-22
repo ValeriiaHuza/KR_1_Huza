@@ -205,4 +205,8 @@ public final class ManufactureController {
     public Map<Manufacture,  List<Souvenir>> getAllSouvenirsAndManufactures(SouvenirList souvenirList) {
         return manufactureList.getAllSouvenirsAndManufactures(souvenirList);
     }
+
+    public List<Manufacture> getManufacturesBySouvenirAndYear(String name, int year, SouvenirList souvenirList) {
+        return manufactureList.getManufacturesBySouvenirAndYear(name, year, souvenirList);
+    }
 }

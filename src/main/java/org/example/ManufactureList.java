@@ -121,4 +121,16 @@ public final class ManufactureList {
                                 .collect(Collectors.toList())
                 ));
     }
+
+    public List<Manufacture> getManufacturesBySouvenirAndYear(String name, int year, SouvenirList souvenirList) {
+
+        List<Long> manufacturesID = souvenirList.getSouvenirList().stream()
+                .filter(s -> s.getName().equalsIgnoreCase(name) && s.getDate_of_manufacture().getYear() == year)
+                .map(Souvenir::getManufacture_id)
+                .toList();
+
+        return manufactureList.stream()
+                .filter(m -> manufacturesID.contains(m.getManufacture_id()))
+                .collect(Collectors.toList());
+    }
 }

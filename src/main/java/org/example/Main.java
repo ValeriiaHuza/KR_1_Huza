@@ -48,10 +48,44 @@ public class Main {
                     getAllSouvenirsAndManufactures();
                     System.out.println("-------");
                     break;
+                case "6" :
+                   getManufacturesBySouvenirAndYear(in);
+                    System.out.println("-------");
+                    break;
                 case "0" :
                 default:
                     return;
             }
+        }
+    }
+
+    private void getManufacturesBySouvenirAndYear(Scanner in) {
+        //Вивести інформацію про виробників заданого сувеніру, виробленого у заданому року.
+        System.out.println("Write souvenir name:");
+
+        String name = in.nextLine().trim();
+
+        while (name.length()==0){
+            System.out.println("Incorrect name. Try again");
+            name = in.nextLine().trim();
+        }
+
+        System.out.println("Write year:");
+        String year = in.nextLine().trim();
+
+        while (!year.matches("\\d*") || year.length()==0){
+            System.out.println("Incorrect year. Try again");
+           year = in.nextLine().trim();
+        }
+
+        List<Manufacture> res = manufactureController.getManufacturesBySouvenirAndYear(name, Integer.parseInt(year), souvenirController.getSouvenirList());
+
+        if(res.size()==0){
+            System.out.println("There are no such manufactures");
+        }
+        else {
+            System.out.println("Manufactures :");
+            res.forEach(System.out::println);
         }
     }
 
