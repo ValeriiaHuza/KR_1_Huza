@@ -28,35 +28,54 @@ public class Main {
         while (true) {
             printMainMenu();
             String input = in.nextLine().trim();
-            switch (input){
+            switch (input) {
                 case "1":
                     crudMenu(in);
                     break;
-                case "2" :
+                case "2":
                     getManufacturesSouvenirs(in);
                     System.out.println("-------");
                     break;
-                case "3" :
+                case "3":
                     getSouvenirsByCountry(in);
                     System.out.println("-------");
                     break;
-                case "4" :
+                case "4":
                     getManufacturesPriceDesc(in);
                     System.out.println("-------");
                     break;
-                case "5" :
+                case "5":
                     getAllSouvenirsAndManufactures();
                     System.out.println("-------");
                     break;
-                case "6" :
-                   getManufacturesBySouvenirAndYear(in);
+                case "6":
+                    getManufacturesBySouvenirAndYear(in);
                     System.out.println("-------");
                     break;
-                case "0" :
+                case "7":
+                    getSouvenirsByYear();
+                    break;
+                case "0":
                 default:
                     return;
             }
         }
+    }
+
+    private void getSouvenirsByYear() {
+        // Для кожного року вивести список сувенірів, зроблених цього року.
+        Map<Integer, List<Souvenir>> res = souvenirController.getSouvenirsByYear();
+
+        if (res.size() == 0) {
+            System.out.println("There are no elements in database");
+        } else {
+            res.forEach(((year, souvenirs) -> {
+                System.out.println("Year : " + year);
+                souvenirs.forEach(souvenir -> System.out.println("        Souvenir: " + souvenir));
+            }));
+        }
+
+
     }
 
     private void getManufacturesBySouvenirAndYear(Scanner in) {
@@ -65,7 +84,7 @@ public class Main {
 
         String name = in.nextLine().trim();
 
-        while (name.length()==0){
+        while (name.length() == 0) {
             System.out.println("Incorrect name. Try again");
             name = in.nextLine().trim();
         }
@@ -73,17 +92,16 @@ public class Main {
         System.out.println("Write year:");
         String year = in.nextLine().trim();
 
-        while (!year.matches("\\d*") || year.length()==0){
+        while (!year.matches("\\d*") || year.length() == 0) {
             System.out.println("Incorrect year. Try again");
-           year = in.nextLine().trim();
+            year = in.nextLine().trim();
         }
 
         List<Manufacture> res = manufactureController.getManufacturesBySouvenirAndYear(name, Integer.parseInt(year), souvenirController.getSouvenirList());
 
-        if(res.size()==0){
+        if (res.size() == 0) {
             System.out.println("There are no such manufactures");
-        }
-        else {
+        } else {
             System.out.println("Manufactures :");
             res.forEach(System.out::println);
         }
@@ -92,14 +110,13 @@ public class Main {
     private void getAllSouvenirsAndManufactures() {
         Map<Manufacture, List<Souvenir>> res = manufactureController.getAllSouvenirsAndManufactures(souvenirController.getSouvenirList());
 
-        if(res.size()==0){
+        if (res.size() == 0) {
             System.out.println("There are no elements in database");
-        }
-        else {
-           res.forEach(((manufacture, souvenirs) -> {
-               System.out.println("Manufacturer : " + manufacture);
-               souvenirs.forEach(souvenir -> System.out.println("        Souvenir: " + souvenir));
-           }));
+        } else {
+            res.forEach(((manufacture, souvenirs) -> {
+                System.out.println("Manufacturer : " + manufacture);
+                souvenirs.forEach(souvenir -> System.out.println("        Souvenir: " + souvenir));
+            }));
         }
     }
 
@@ -109,7 +126,7 @@ public class Main {
 
         String sPrice = in.nextLine().trim();
 
-        while (!sPrice.matches("\\d*\\.?\\d+")){
+        while (!sPrice.matches("\\d*\\.?\\d+")) {
             System.out.println("Incorrect price. Try again");
             sPrice = in.nextLine().trim();
         }
@@ -118,10 +135,9 @@ public class Main {
 
         List<Manufacture> res = manufactureController.getManufacturePriceDesc(dPrice, souvenirController.getSouvenirList());
 
-        if(res.size()==0){
+        if (res.size() == 0) {
             System.out.println("There are no such manufactures");
-        }
-        else {
+        } else {
             System.out.println("Manufactures :");
             res.forEach(System.out::println);
         }
@@ -134,10 +150,9 @@ public class Main {
 
         List<Souvenir> res = souvenirController.getSouvenirsByCountry(country, manufactureController.getManufactureList());
 
-        if(res.size()==0){
+        if (res.size() == 0) {
             System.out.println("There are no souvenirs from this country");
-        }
-        else {
+        } else {
             System.out.println("Souvenirs from " + country + " :");
             res.forEach(System.out::println);
         }
@@ -147,7 +162,7 @@ public class Main {
         System.out.println("Write manufacture id which souvenirs you want to get:");
 
         String findId = in.nextLine().trim();
-        while (!findId.matches("\\d*")){
+        while (!findId.matches("\\d*")) {
             System.out.println("Incorrect id. Try again");
             findId = in.nextLine().trim();
         }
@@ -157,15 +172,13 @@ public class Main {
 
             List<Souvenir> res = souvenirController.getSouvenirsByManufacture(findIDLong);
 
-            if(res.size()==0){
+            if (res.size() == 0) {
                 System.out.println("This manufacture doesn't have souvenirs");
-            }
-            else {
+            } else {
                 System.out.println(findId + " souvenirs :");
                 res.forEach(System.out::println);
             }
-        }
-        else {
+        } else {
             System.out.println("Such manufacture id doesn't exist. Please, try again");
         }
     }
@@ -228,7 +241,7 @@ public class Main {
         System.out.println("Write manufacture id which you want to delete:");
 
         String deleteId = in.nextLine().trim();
-        while (!deleteId.matches("\\d*")){
+        while (!deleteId.matches("\\d*")) {
             System.out.println("Incorrect id. Try again");
             deleteId = in.nextLine().trim();
         }
@@ -236,9 +249,8 @@ public class Main {
 
         if (manufactureController.getAllManufactureID().contains(deleteIdLong)) {
 
-            manufactureController.deleteManufacture(deleteIdLong,souvenirController);
-        }
-        else {
+            manufactureController.deleteManufacture(deleteIdLong, souvenirController);
+        } else {
             System.out.println("Such manufacture id doesn't exist. Please, try again");
         }
     }
@@ -247,7 +259,7 @@ public class Main {
         System.out.println("Write souvenir id which you want to delete:");
 
         String deleteId = in.nextLine().trim();
-        while (!deleteId.matches("\\d*")){
+        while (!deleteId.matches("\\d*")) {
             System.out.println("Incorrect id. Try again");
             deleteId = in.nextLine().trim();
         }
@@ -255,8 +267,7 @@ public class Main {
 
         if (souvenirController.getAllSouvenirsID().contains(deleteIdLong)) {
             souvenirController.deleteSouvenir(deleteIdLong);
-        }
-        else {
+        } else {
             System.out.println("Such souvenir id doesn't exist. Please, try again");
         }
     }
@@ -265,7 +276,7 @@ public class Main {
         System.out.println("Write souvenir id which you want to update:");
 
         String supdateID = in.nextLine().trim();
-        while (!supdateID.matches("\\d*")){
+        while (!supdateID.matches("\\d*")) {
             System.out.println("Incorrect id. Try again");
             supdateID = in.nextLine().trim();
         }
@@ -283,40 +294,40 @@ public class Main {
                 String sName = in.nextLine().trim();
                 System.out.println("Write NEW manufacture_id");
                 String manId = in.nextLine().trim();
-                while (!manId.matches("\\d*") && manId.length()!=0){
+                while (!manId.matches("\\d*") && manId.length() != 0) {
                     System.out.println("Incorrect id. Try again");
                     manId = in.nextLine().trim();
                 }
                 System.out.println("Write NEW date of manufacture in such format - YYYY-MM-DD");
                 String sDate = in.nextLine().trim();
-                while (!isValidDate(sDate)&&sDate.length()!=0){
+                while (!isValidDate(sDate) && sDate.length() != 0) {
                     System.out.println("Incorrect date. Try again");
                     sDate = in.nextLine().trim();
                 }
                 System.out.println("Write NEW price");
                 String sPrice = in.nextLine().trim();
-                while (!sPrice.matches("\\d*\\.?\\d+") && sPrice.length()!=0){
+                while (!sPrice.matches("\\d*\\.?\\d+") && sPrice.length() != 0) {
                     System.out.println("Incorrect price. Try again");
                     sPrice = in.nextLine().trim();
                 }
 
-                if(sName.length()>0){
+                if (sName.length() > 0) {
                     oldSouvenir.setName(sName);
                 }
 
-                if(manId.length()>0){
+                if (manId.length() > 0) {
                     oldSouvenir.setManufacture_id(Long.parseLong(manId));
                 }
 
-                if (sDate.length()>0){
-                    oldSouvenir.setDate_of_manufacture(LocalDate.parse(sDate,formatter));
+                if (sDate.length() > 0) {
+                    oldSouvenir.setDate_of_manufacture(LocalDate.parse(sDate, formatter));
                 }
 
-                if (sPrice.length()>0){
+                if (sPrice.length() > 0) {
                     oldSouvenir.setPrice(Double.parseDouble(sPrice));
                 }
 
-                boolean success = souvenirController.updateSouvenir(oldSouvenir,manufactureController.getManufactureList());
+                boolean success = souvenirController.updateSouvenir(oldSouvenir, manufactureController.getManufactureList());
                 if (!success) {
                     System.out.println("Try to update the souvenir again - press 1. If you don't want - press something else.");
                     String input = in.nextLine().trim();
@@ -327,7 +338,7 @@ public class Main {
                     break;
                 }
             }
-        }else {
+        } else {
             System.out.println("Such souvenir id doesn't exist. Please, try again");
         }
 
@@ -346,7 +357,7 @@ public class Main {
             System.out.println("Write manufacture_id");
             String manId = in.nextLine().trim();
 
-            while (!manId.matches("\\d*")){
+            while (!manId.matches("\\d*")) {
                 System.out.println("Incorrect id. Try again");
                 manId = in.nextLine().trim();
             }
@@ -355,7 +366,7 @@ public class Main {
             System.out.println("Write date of manufacture in such format - YYYY-MM-DD");
             String sDate = in.nextLine().trim();
 
-            while (!isValidDate(sDate)){
+            while (!isValidDate(sDate)) {
                 System.out.println("Incorrect date. Try again");
                 sDate = in.nextLine().trim();
             }
@@ -364,15 +375,15 @@ public class Main {
             System.out.println("Write price");
             String sPrice = in.nextLine().trim();
 
-            while (!sPrice.matches("\\d*\\.?\\d+")){
+            while (!sPrice.matches("\\d*\\.?\\d+")) {
                 System.out.println("Incorrect price. Try again");
                 sPrice = in.nextLine().trim();
             }
 
             double dPrice = Double.parseDouble(sPrice);
-            Souvenir newSouvenir = new Souvenir(sName, manIDLong,localDate,dPrice);
+            Souvenir newSouvenir = new Souvenir(sName, manIDLong, localDate, dPrice);
 
-            boolean success = souvenirController.saveSouvenir(newSouvenir,manufactureController.getManufactureList());
+            boolean success = souvenirController.saveSouvenir(newSouvenir, manufactureController.getManufactureList());
             if (!success) {
                 System.out.println("Try to create the souvenir again - press 1. If you don't want - press something else.");
                 String input = in.nextLine().trim();
@@ -390,7 +401,7 @@ public class Main {
         System.out.println("Write manufacture id which you want to update:");
 
         String updateID = in.nextLine().trim();
-        while (!updateID.matches("\\d*")){
+        while (!updateID.matches("\\d*")) {
             System.out.println("Incorrect id. Try again");
             updateID = in.nextLine().trim();
         }
@@ -427,8 +438,7 @@ public class Main {
                     break;
                 }
             }
-        }
-        else {
+        } else {
             System.out.println("Such manufacture id doesn't exist. Try again, please. ");
         }
     }

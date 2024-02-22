@@ -5,7 +5,9 @@ import lombok.Setter;
 import org.example.schema.Manufacture;
 import org.example.schema.Souvenir;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -49,7 +51,7 @@ public final class ManufactureList {
                 break;
             }
         }
-        if (index!=-1) {
+        if (index != -1) {
             manufactureList.set(index, newMan);
         }
     }
@@ -100,7 +102,7 @@ public final class ManufactureList {
 
     }
 
-    public Map<Manufacture,  List<Souvenir>> getAllSouvenirsAndManufactures(SouvenirList souvenirList) {
+    public Map<Manufacture, List<Souvenir>> getAllSouvenirsAndManufactures(SouvenirList souvenirList) {
 
         //without streams
         //        Map<Manufacture, List<Souvenir>> res = new HashMap<>();

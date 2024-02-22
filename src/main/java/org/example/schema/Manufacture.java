@@ -1,6 +1,9 @@
 package org.example.schema;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,17 +22,17 @@ public class Manufacture {
     private String name;
     private String country;
 
-    public Manufacture(String name, String country){
+    public Manufacture(String name, String country) {
         this.name = name;
         this.country = country;
 
         long prevID = readIDFromFile();
 
-        this.manufacture_id = prevID+1;
+        this.manufacture_id = prevID + 1;
     }
 
     private long readIDFromFile() {
-        try (BufferedReader reader = Files.newBufferedReader(Path.of("manufacture_id.txt"), StandardCharsets.UTF_8)){
+        try (BufferedReader reader = Files.newBufferedReader(Path.of("manufacture_id.txt"), StandardCharsets.UTF_8)) {
             String line = reader.readLine();
             if (line != null && !line.isEmpty()) {
                 return Long.parseLong(line);
@@ -52,7 +55,7 @@ public class Manufacture {
     public String toString() {
         return
                 "Manufacture_id=" + manufacture_id +
-                ", name='" + name + '\'' +
-                ", country='" + country + '\'';
+                        ", name='" + name + '\'' +
+                        ", country='" + country + '\'';
     }
 }

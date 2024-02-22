@@ -7,6 +7,7 @@ import org.example.schema.Souvenir;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -117,8 +118,34 @@ public final class SouvenirList {
                 .map(Manufacture::getManufacture_id)
                 .toList();
 
-        return  souvenirList.stream()
+        return souvenirList.stream()
                 .filter(s -> manufacturesFromCountry.contains(s.getManufacture_id()))
                 .collect(Collectors.toList());
+    }
+
+    public Map<Integer, List<Souvenir>> getSouvenirsByYear() {
+//without streams
+//        Map<Integer,List<Souvenir>> res = new HashMap<>();
+//
+//        for (Souvenir s : souvenirList){
+//
+//            int year = s.getDate_of_manufacture().getYear();
+//            List<Souvenir> list;
+//            if(res.containsKey(year)){
+//                list = res.get(year);
+//            }
+//            else {
+//                list = new ArrayList<>();
+//            }
+//            list.add(s);
+//            res.put(year, list);
+//        }
+
+        //with stream
+        return souvenirList.stream()
+                .collect(Collectors.groupingBy(
+                        s -> s.getDate_of_manufacture().getYear(),
+                        Collectors.toList()
+                ));
     }
 }

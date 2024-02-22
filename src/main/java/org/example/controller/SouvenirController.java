@@ -15,6 +15,7 @@ import java.nio.file.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 //singleton
 @Getter
@@ -221,6 +222,10 @@ public final class SouvenirController {
     }
 
     public List<Souvenir> getSouvenirsByCountry(String country, ManufactureList manufactureList) {
-        return souvenirList.getSouvenirsByCountry(country,manufactureList);
+        return souvenirList.getSouvenirsByCountry(country, manufactureList);
+    }
+
+    public Map<Integer, List<Souvenir>> getSouvenirsByYear() {
+        return souvenirList.getSouvenirsByYear();
     }
 }

@@ -1,8 +1,13 @@
 package org.example.schema;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +25,7 @@ public class Souvenir implements Serializable {
     private LocalDate date_of_manufacture;
     private double price;
 
-    public Souvenir(String name, long manufacture_id, LocalDate date_of_manufacture, double price){
+    public Souvenir(String name, long manufacture_id, LocalDate date_of_manufacture, double price) {
         this.name = name;
         this.manufacture_id = manufacture_id;
         this.date_of_manufacture = date_of_manufacture;
@@ -28,15 +33,15 @@ public class Souvenir implements Serializable {
 
 //        String combinedAttributes = name + manufacture_id;
 //        UUID objectId = UUID.nameUUIDFromBytes(combinedAttributes.getBytes());
-        
+
         long prevID = readIDFromFile();
 
-        this.souvenir_id = prevID+1;
+        this.souvenir_id = prevID + 1;
 
     }
 
     private long readIDFromFile() {
-        try (BufferedReader reader = Files.newBufferedReader(Path.of("souvenir_id.txt"), StandardCharsets.UTF_8)){
+        try (BufferedReader reader = Files.newBufferedReader(Path.of("souvenir_id.txt"), StandardCharsets.UTF_8)) {
             String line = reader.readLine();
             if (line != null && !line.isEmpty()) {
                 return Long.parseLong(line);

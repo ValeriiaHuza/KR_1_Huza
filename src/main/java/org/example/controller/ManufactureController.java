@@ -181,13 +181,13 @@ public final class ManufactureController {
 
             List<Long> allToDelete = new ArrayList<>();
 
-            for (Souvenir s : souvenirController.getSouvenirList().getSouvenirList()){
-                if(s.getManufacture_id()==manufacture.getManufacture_id()){
-                   allToDelete.add(s.getSouvenir_id());
+            for (Souvenir s : souvenirController.getSouvenirList().getSouvenirList()) {
+                if (s.getManufacture_id() == manufacture.getManufacture_id()) {
+                    allToDelete.add(s.getSouvenir_id());
                 }
             }
 
-            for (long l : allToDelete){
+            for (long l : allToDelete) {
                 souvenirController.deleteSouvenir(l);
             }
 
@@ -199,10 +199,10 @@ public final class ManufactureController {
     }
 
     public List<Manufacture> getManufacturePriceDesc(double price, SouvenirList souvenirList) {
-        return  manufactureList.getManufacturesPriceDesc(price, souvenirList);
+        return manufactureList.getManufacturesPriceDesc(price, souvenirList);
     }
 
-    public Map<Manufacture,  List<Souvenir>> getAllSouvenirsAndManufactures(SouvenirList souvenirList) {
+    public Map<Manufacture, List<Souvenir>> getAllSouvenirsAndManufactures(SouvenirList souvenirList) {
         return manufactureList.getAllSouvenirsAndManufactures(souvenirList);
     }
 
