@@ -57,7 +57,7 @@ public class Souvenir implements Serializable {
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass()) return false;
         Souvenir other = (Souvenir) obj;
-        return Objects.equals(name, other.name) &&
+        return name.equalsIgnoreCase(other.getName()) &&
                 Objects.equals(manufacture_id, other.manufacture_id);
     }
 

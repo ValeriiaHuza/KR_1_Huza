@@ -72,7 +72,7 @@ public final class SouvenirController {
 
             souvenirList.add(souvenir);
             saveSouvenirIDTOFile(souvenir);
-            System.out.println("Souvenir object saved to file successfully.");
+            System.out.println("Souvenir - " + souvenir + " - saved to file successfully.");
             return true;
         } catch (IOException e) {
             System.out.println("Can't save souvenir");
@@ -100,7 +100,7 @@ public final class SouvenirController {
             if (s.getSouvenir_id() != (newSouvenir.getSouvenir_id())) {
                 //якщо айді не співпадають, але імена і виробник такі вже є, то оновлювати не можна
                 if (s.getName().trim().equals(newSouvenir.getName().trim()) && s.getManufacture_id() == newSouvenir.getManufacture_id()) {
-                    System.out.println("Such souvenir name exists");
+                    System.out.println(newSouvenir.getName() + " souvenir name exists");
                     return false;
                 }
             }
@@ -146,6 +146,8 @@ public final class SouvenirController {
                 Path newPath = Paths.get(MAIN_FOLDER_NAME, generateFileName(newSouvenir));
                 Files.move(souvenirFile, newPath, StandardCopyOption.REPLACE_EXISTING);
                 System.out.println("Souvenir object updated!");
+                System.out.println("New souvenir - " + newSouvenir);
+
                 return true;
             }
         } catch (IOException e) {
@@ -162,6 +164,7 @@ public final class SouvenirController {
         try {
             Files.delete(filePath);
             souvenirList.delete(souvenir);
+            System.out.println(souvenir + " successfully deleted!");
         } catch (IOException e) {
             System.out.println("Error deleting file: " + e.getMessage());
         }

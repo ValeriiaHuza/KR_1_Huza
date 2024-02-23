@@ -59,7 +59,7 @@ public final class ManufactureController {
 
             manufactureList.add(manufacture);
             saveManufactureIDTOFile(manufacture);
-            System.out.println("Manufacture object saved to file successfully.");
+            System.out.println("Manufacture - " + manufacture + " - saved to file successfully.");
             return true;
         } catch (IOException e) {
             System.out.println("Can't save manufacture");
@@ -77,7 +77,7 @@ public final class ManufactureController {
             if (m.getManufacture_id() != (newManufacture.getManufacture_id())) {
                 //якщо айді не співпадають, але імена такі вже є, то оновлювати не можна
                 if (m.getName().equals(newManufacture.getName())) {
-                    System.out.println("Such manufacture name exists");
+                    System.out.println( newManufacture + " manufacture name exists");
                     return false;
                 }
             }
@@ -113,6 +113,7 @@ public final class ManufactureController {
                 Path newPath = Paths.get(MAIN_FOLDER_NAME, generateFileName(newManufacture));
                 Files.move(manufactureFile, newPath, StandardCopyOption.REPLACE_EXISTING);
                 System.out.println("Manufacture object updated!");
+                System.out.println("New manufacture - " + newManufacture);
                 return true;
             }
         } catch (IOException e) {
@@ -191,6 +192,7 @@ public final class ManufactureController {
                 souvenirController.deleteSouvenir(l);
             }
 
+            System.out.println(manufacture + " - successfully deleted!");
 
         } catch (IOException e) {
             System.out.println("Error deleting file: " + e.getMessage());

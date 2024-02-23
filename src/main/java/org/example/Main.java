@@ -54,6 +54,7 @@ public class Main {
                     break;
                 case "7":
                     getSouvenirsByYear();
+                    System.out.println("-------");
                     break;
                 case "0":
                 default:
@@ -126,7 +127,7 @@ public class Main {
 
         String sPrice = in.nextLine().trim();
 
-        while (!sPrice.matches("\\d*\\.?\\d+")) {
+        while (!sPrice.matches("\\d*\\.?\\d+") || sPrice.length()==0) {
             System.out.println("Incorrect price. Try again");
             sPrice = in.nextLine().trim();
         }
@@ -148,6 +149,11 @@ public class Main {
 
         String country = in.nextLine().trim();
 
+        while (country.length()==0){
+            System.out.println("Incorrect country. Try again, please.");
+            country = in.nextLine().trim();
+        }
+
         List<Souvenir> res = souvenirController.getSouvenirsByCountry(country, manufactureController.getManufactureList());
 
         if (res.size() == 0) {
@@ -162,7 +168,7 @@ public class Main {
         System.out.println("Write manufacture id which souvenirs you want to get:");
 
         String findId = in.nextLine().trim();
-        while (!findId.matches("\\d*")) {
+        while (!findId.matches("\\d*") || findId.length()==0) {
             System.out.println("Incorrect id. Try again");
             findId = in.nextLine().trim();
         }
@@ -213,6 +219,7 @@ public class Main {
                     break;
                 case "4":
                     deleteManufacture(in);
+                    System.out.println("-------");
                     break;
                 case "5":
                     createSouvenir(in);
@@ -241,7 +248,7 @@ public class Main {
         System.out.println("Write manufacture id which you want to delete:");
 
         String deleteId = in.nextLine().trim();
-        while (!deleteId.matches("\\d*")) {
+        while (!deleteId.matches("\\d*") || deleteId.length()==0) {
             System.out.println("Incorrect id. Try again");
             deleteId = in.nextLine().trim();
         }
@@ -259,7 +266,7 @@ public class Main {
         System.out.println("Write souvenir id which you want to delete:");
 
         String deleteId = in.nextLine().trim();
-        while (!deleteId.matches("\\d*")) {
+        while (!deleteId.matches("\\d*") || deleteId.length()==0) {
             System.out.println("Incorrect id. Try again");
             deleteId = in.nextLine().trim();
         }
@@ -276,7 +283,7 @@ public class Main {
         System.out.println("Write souvenir id which you want to update:");
 
         String supdateID = in.nextLine().trim();
-        while (!supdateID.matches("\\d*")) {
+        while (!supdateID.matches("\\d*") || supdateID.length()==0) {
             System.out.println("Incorrect id. Try again");
             supdateID = in.nextLine().trim();
         }
@@ -292,6 +299,12 @@ public class Main {
                 System.out.println("This souvenir - " + oldSouvenir.toString());
                 System.out.println("Write NEW name");
                 String sName = in.nextLine().trim();
+
+                while (sName.contains("_")&&sName.length()!=0){
+                    System.out.println("Incorrect name. Try again");
+                    sName = in.nextLine().trim();
+                }
+
                 System.out.println("Write NEW manufacture_id");
                 String manId = in.nextLine().trim();
                 while (!manId.matches("\\d*") && manId.length() != 0) {
@@ -306,7 +319,7 @@ public class Main {
                 }
                 System.out.println("Write NEW price");
                 String sPrice = in.nextLine().trim();
-                while (!sPrice.matches("\\d*\\.?\\d+") && sPrice.length() != 0) {
+                while (!sPrice.matches("\\d*\\.?\\d+") && sPrice.length() != 0 || sPrice.equalsIgnoreCase("0")) {
                     System.out.println("Incorrect price. Try again");
                     sPrice = in.nextLine().trim();
                 }
@@ -354,10 +367,16 @@ public class Main {
             System.out.println("Creating new Souvenir!");
             System.out.println("Write name");
             String sName = in.nextLine().trim();
+
+            while (sName.length()==0){
+                System.out.println("Incorrect name");
+                sName = in.nextLine().trim();
+            }
+
             System.out.println("Write manufacture_id");
             String manId = in.nextLine().trim();
 
-            while (!manId.matches("\\d*")) {
+            while (!manId.matches("\\d*") || manId.length()==0) {
                 System.out.println("Incorrect id. Try again");
                 manId = in.nextLine().trim();
             }
@@ -366,7 +385,7 @@ public class Main {
             System.out.println("Write date of manufacture in such format - YYYY-MM-DD");
             String sDate = in.nextLine().trim();
 
-            while (!isValidDate(sDate)) {
+            while (!isValidDate(sDate) || sDate.length()==0) {
                 System.out.println("Incorrect date. Try again");
                 sDate = in.nextLine().trim();
             }
@@ -375,7 +394,7 @@ public class Main {
             System.out.println("Write price");
             String sPrice = in.nextLine().trim();
 
-            while (!sPrice.matches("\\d*\\.?\\d+")) {
+            while (!sPrice.matches("\\d*\\.?\\d+")||sPrice.length()==0 || sPrice.equalsIgnoreCase("0")) {
                 System.out.println("Incorrect price. Try again");
                 sPrice = in.nextLine().trim();
             }
@@ -401,7 +420,7 @@ public class Main {
         System.out.println("Write manufacture id which you want to update:");
 
         String updateID = in.nextLine().trim();
-        while (!updateID.matches("\\d*")) {
+        while (!updateID.matches("\\d*") || updateID.length()==0) {
             System.out.println("Incorrect id. Try again");
             updateID = in.nextLine().trim();
         }
@@ -453,8 +472,17 @@ public class Main {
             System.out.println("Creating new Manufacture!");
             System.out.println("Write name");
             String manName = in.nextLine().trim();
+            while (manName.length()==0 || manName.contains("_")){
+                System.out.println("Incorrect name");
+                manName = in.nextLine().trim();
+            }
             System.out.println("Write country");
             String manCountry = in.nextLine().trim();
+
+            while (manCountry.length()==0){
+                System.out.println("Incorrect country");
+                manCountry = in.nextLine().trim();
+            }
 
             Manufacture newManufacture = new Manufacture(manName, manCountry);
 

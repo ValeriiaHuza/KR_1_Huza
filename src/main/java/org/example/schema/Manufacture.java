@@ -48,7 +48,7 @@ public class Manufacture {
     public boolean equals(Object obj) {
         if (obj == null || getClass() != obj.getClass()) return false;
         Manufacture other = (Manufacture) obj;
-        return Objects.equals(name, other.name);
+        return name.equalsIgnoreCase(other.getName());
     }
 
     @Override
